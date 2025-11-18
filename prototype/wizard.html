@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мастер кампании · Telegram CPP</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.4;
+        color: #12141b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        background: #f4f5f8;
+      }
+      nav {
+        width: 280px;
+        padding: 24px;
+        border-right: 1px solid #e0e4ec;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .logo {
+        font-weight: 600;
+        font-size: 18px;
+      }
+      .caption {
+        color: #5c6478;
+        font-size: 14px;
+      }
+      .nav-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .nav-link {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        text-decoration: none;
+        color: inherit;
+        font-weight: 500;
+        background: #f6f7fb;
+      }
+      .nav-link.active {
+        border-color: #1d64f2;
+        color: #1d64f2;
+        background: #eef3ff;
+      }
+      main {
+        flex: 1;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .wizard-header {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .wizard-header small {
+        color: #5c6478;
+      }
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        border-radius: 999px;
+        background: #e1e6f1;
+        overflow: hidden;
+      }
+      .progress-value {
+        height: 100%;
+        background: #1d64f2;
+      }
+      .step {
+        display: none;
+        flex-direction: column;
+        gap: 20px;
+        background: #fff;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #e0e4ec;
+      }
+      .step.active {
+        display: flex;
+      }
+      .field-group {
+        display: grid;
+        gap: 16px;
+      }
+      label {
+        font-weight: 600;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #cfd5e4;
+        padding: 10px 12px;
+        font: inherit;
+        background: #fff;
+      }
+      textarea {
+        min-height: 96px;
+      }
+      .two-col {
+        display: grid;
+        gap: 16px;
+      }
+      .date-range {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 12px;
+      }
+      .channel-table,
+      .creative-list {
+        border: 1px solid #e0e4ec;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .channel-table table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .channel-table th,
+      .channel-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #edf0f6;
+      }
+      .channel-table th {
+        background: #f6f7fb;
+        text-align: left;
+        font-weight: 600;
+        color: #5c6478;
+      }
+      .creative-card {
+        padding: 16px;
+        border-bottom: 1px solid #edf0f6;
+      }
+      .creative-card:last-child {
+        border-bottom: none;
+      }
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+      .button {
+        border-radius: 10px;
+        border: none;
+        padding: 10px 18px;
+        font-weight: 600;
+        cursor: pointer;
+        font: inherit;
+      }
+      .button.secondary {
+        background: #e6ebf7;
+        color: #1d2a44;
+      }
+      .button.primary {
+        background: #1d64f2;
+        color: #fff;
+      }
+      .summary-list {
+        display: grid;
+        gap: 12px;
+      }
+      .summary-item {
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid #e0e4ec;
+      }
+      .chip-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid #cfd5e4;
+        background: #f6f7fb;
+        font-size: 14px;
+        line-height: 1.2;
+      }
+      .chip.selected {
+        border-color: #1d64f2;
+        color: #1d64f2;
+        background: #eef3ff;
+      }
+      .chip.negative {
+        border-color: #ffb7b0;
+        background: #fff5f4;
+        color: #c53030;
+      }
+      .chip-remove {
+        font-weight: 700;
+        color: inherit;
+        opacity: 0.7;
+      }
+      .chip-remove::before {
+        content: '×';
+      }
+      .suggest-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+      }
+      .suggest-row input {
+        flex: 1;
+        min-width: 220px;
+      }
+      .suggest-hint {
+        color: #5c6478;
+        font-size: 13px;
+      }
+      @media (max-width: 900px) {
+        body {
+          flex-direction: column;
+        }
+        nav {
+          width: 100%;
+          border-right: none;
+          border-bottom: 1px solid #e0e4ec;
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        .nav-link {
+          flex: 1 1 calc(50% - 8px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">Яндекс.Директ · CPP</div>
+      <div class="caption">Мастер кампании</div>
+      <div class="nav-list">
+        <a class="nav-link" data-step-link="brief" href="#brief">1. Бриф и бюджет</a>
+        <a class="nav-link" data-step-link="audience" href="#audience">2. Аудитория</a>
+        <a class="nav-link" data-step-link="channels" href="#channels">3. Каналы</a>
+        <a class="nav-link" data-step-link="creatives" href="#creatives">4. Креативы</a>
+        <a class="nav-link" data-step-link="launch" href="#launch">5. Предпросмотр</a>
+      </div>
+    </nav>
+    <main>
+      <header class="wizard-header">
+        <small>Мастер создания кампании</small>
+        <h1 id="step-title">Шаг 1 · Бриф и бюджет</h1>
+        <div class="progress-bar">
+          <div class="progress-value" id="progress" style="width: 20%"></div>
+        </div>
+      </header>
+
+      <section class="step" data-step="brief">
+        <div class="field-group">
+          <label>Ссылка на объект рекламы</label>
+          <input value="https://ya.ru" />
+        </div>
+        <div class="field-group">
+          <label>Бриф</label>
+          <textarea>В Яндекс Браузере появилась новая функция “Нейро”, которая дает один ответ на любой вопрос со знанием со всего интернета.&#10;&#10;Подробнее о Нейро: https://docs.google.com/presentation/d/1uXIfGgdcFd1pJVFB9tokziY_CiMng7DM/edit#slide=id.p12&#10;&#10;Ссылки по которым можно скачать актуальное приложение для подготовки нативных публикаций:&#10;для ПК https://yandex.ru/project/browser/neuro/s/1 (функция доступна на странице https://ya.ru )&#10;для IOS https://clck.ru/3CJuRs&#10;для Android https://play.google.com/store/apps/details?id=com.yandex.browser&amp;hl=ru</textarea>
+        </div>
+        <div class="field-group">
+          <label>Требования к публикациям</label>
+          <textarea>Подумайте, на какие темы вы пишете/снимаете контент больше всего.&#10;С какими проблемами вы сталкиваетесь чаще/какие вопросы возникают в вашей рутине.&#10;Покажите в видео ситуацию/кратко опишите проблему, вовлекая аудиторию&#10;“Решите” эту проблему с помощью сервиса Нейро: покажите, как задаете вопрос текстом или картинкой&#10;Продемонстрируйте интерфейс сервиса и то, какой результат он показал&#10;Постарайтесь показать ситуацию и задать вопрос в юмористическом ключе, можно записать в формате скетча.&#10;Покажите, что Нейро удобный и быстро выдаёт ответы, в конце расскажите, что сервис доступен в Яндекс Браузере&#10;&#10;Помните, что рекламная интеграция должна быть:&#10;— Органично вписана в ваш ежедневный контент;&#10;— Снята при дневном освещении или при помощи модного светового кольца, это же must have:)&#10;— Снята без шумов на фоне;&#10;— С субтитрами, так как 50% аудитории листают stories без звука;</textarea>
+        </div>
+        <div class="two-col">
+          <div class="field-group">
+            <label>Важно</label>
+            <textarea>Ваше вознаграждение будет начислено за согласованный, опубликованный и подтвержденный внутри проекта креатив&#10;В случае, если ваш креатив не был согласован с первого раза, у вас есть возможность скорректировать его и направить повторно&#10;В проекте могут участвовать блогеры с аудиторией от 1000 подписчиков&#10;В проекте смогут принять участие только 602 блогера&#10;В проекте могут участвовать блогеры, каналы которых с личным присутствием.&#10;При подготовке креатива обязательно необходимо личное присутствие блогера в кадре&#10;При подготовке креатива обязательно уточняйте, что для пользования функцией Нейро необходимо скачать Яндекс Браузер.&#10;Участвуя в данном проекте, вы подтверждаете, что готовы передать права на согласованный креатив, а также дальнейшее отсутствие претензий к переданному рекламодателю креативу&#10;Без подтверждения публикации (скриншот статистики + ссылка на публикацию) вознаграждение не будет начислено&#10;Каждый участник может опубликовать только 1 креатив в рамках проекта&#10;Для участия в проекте необходимо подготовить видео-креатив длительностью 30-60 сек&#10;Правильное произношение названия сервиса - нЕйро (ударение на первый слог)</textarea>
+          </div>
+          <div class="field-group">
+            <label>Запрещено</label>
+            <textarea>— Публиковать креатив без маркировки ООО «ЯНДЕКС». ИНН 7736207543.&#10;— Публикация несогласованных креативов.&#10;— Более одной публикации у одного блогера.&#10;— Совмещение новостного контента с рекламными публикациями.&#10;— Сравнение с конкурентами.&#10;— Использование мата и другой нецензурной лексики.</textarea>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Информация о продукте/услуге</label>
+          <textarea>Сервис Нейро даёт один ответ на любой вопрос, используя все доступные знания из интернета. Нейро работает в Яндекс Браузере на смартфонах и компьютерах.&#10;&#10;Принцип работы: сервис найдёт необходимые источники, проанализирует их и объединит информацию в один ответ. Ему можно задавать вопросы так, как они приходят в голову. Ответ всегда содержит актуальную информацию и ссылки на источники. А когда не хватает слов, можно спросить картинкой.&#10;&#10;Примеры запросов в Нейро:&#10;Какая наживка лучше для зиг-рига на карпа осенью?&#10;Почему пористые волосы надо увлажнять, если от влаги они становятся ещё пушистее?&#10;Какие были особенности у французской экономической революции? Списком&#10;Почему отпуск по уходу за ребёнком не входит в пенсионный стаж?&#10;Почему вороны собираются в стаи, кружатся и каркают весной?&#10;Почему в последней «Дюне» все Харконнены лысые?&#10;Увидел мем, что мужчины постоянно думают про Римскую империю. Это так?&#10;Как кошки воспринимают человека? Как большого кота или как другое существо?&#10;Про какие «алюминиевые огурцы» пел Цой?&#10;Правда ли, что шершни питаются пчёлами?&#10;&#10;Нейро в Яндекс Браузере это:&#10;Продукт всех знаний в интернете — задача которого дать ответ на вопрос.&#10;Достоверность — все ответы подтверждаются ссылками на источники.&#10;Удобство — спрашивайте коротко/ с подробностями/ текстом/картинкой. Переспрашивать Нейро тоже можно.&#10;Открытость — Нейро ответит на вопрос, если информация есть в открытой части интернета.</textarea>
+        </div>
+        <div class="field-group">
+          <label>Сроки проведения</label>
+          <div class="date-range">
+            <input type="date" value="2024-05-01" />
+            <input type="date" value="2024-06-30" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Общий бюджет</label>
+          <input type="number" placeholder="Уточняется" />
+        </div>
+        <div class="actions">
+          <button class="button primary" data-nav="next" data-target="audience">Далее · Аудитория</button>
+        </div>
+      </section>
+      <section class="step" data-step="audience">
+        <p>LLM ранжировал все доступные тематики по релевантности брифу. Верхние позиции уже помечены как выбранные, остальные можно включать или исключать вручную.</p>
+
+        <div class="field-group">
+          <label>Отобранные тематики</label>
+          <div class="chip-list" role="list">
+            <span class="chip selected">Наука и технологии <span class="chip-remove" aria-hidden="true"></span></span>
+            <span class="chip selected">Образование и познавательное <span class="chip-remove" aria-hidden="true"></span></span>
+            <span class="chip selected">Лайфстайл и блоги <span class="chip-remove" aria-hidden="true"></span></span>
+            <span class="chip selected">Юмор и развлечения <span class="chip-remove" aria-hidden="true"></span></span>
+          </div>
+          <div class="suggest-row">
+            <input list="topic-suggestions" placeholder="Добавить или ввести свою тематику" value="Скетчи про повседневные вопросы" />
+            <span class="suggest-hint">Подсказки обновляются от брифа, но можно вводить произвольный текст.</span>
+          </div>
+          <datalist id="topic-suggestions">
+            <option value="Наука и технологии"></option>
+            <option value="Образование и познавательное"></option>
+            <option value="Лайфстайл и блоги"></option>
+            <option value="Юмор и развлечения"></option>
+            <option value="Психология и саморазвитие"></option>
+            <option value="Культура и события"></option>
+            <option value="Путешествия и туризм"></option>
+            <option value="Новости и СМИ"></option>
+            <option value="Книги, аудиокниги и подкасты"></option>
+            <option value="Маркетинг и PR"></option>
+            <option value="Экономика и финансы"></option>
+          </datalist>
+        </div>
+
+
+        <div class="field-group">
+          <label>Минус-тематики и исключения</label>
+          <div class="chip-list">
+            <span class="chip negative">Политика и общество <span class="chip-remove" aria-hidden="true"></span></span>
+            <span class="chip negative">Ставки и гемблинг <span class="chip-remove" aria-hidden="true"></span></span>
+            <span class="chip negative">Теневой интернет <span class="chip-remove" aria-hidden="true"></span></span>
+          </div>
+          <div class="suggest-row">
+            <input list="minus-topic-suggestions" placeholder="Добавить ещё, например «Для взрослых»" value="Для взрослых (18+)" />
+            <span class="suggest-hint">Выпадающий список подсказывает чувствительные темы.</span>
+          </div>
+          <datalist id="minus-topic-suggestions">
+            <option value="Политика и общество"></option>
+            <option value="Ставки и гемблинг"></option>
+            <option value="Теневой интернет и Digital-андерграунд"></option>
+            <option value="Для взрослых (18+)"></option>
+            <option value="Запрещённые тематики"></option>
+          </datalist>
+        </div>
+
+        <div class="actions">
+          <button class="button secondary" data-nav="prev" data-target="brief">Назад</button>
+          <button class="button primary" data-nav="next" data-target="channels">Далее · Каналы</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="channels">
+        <p>Рекомендованные каналы, которые первыми получат оффер. Можно исключать вручную.</p>
+        <div class="field-group">
+          <label>Фильтры</label>
+          <div class="two-col">
+            <input placeholder="Макс. CPP, ₽" />
+            <input placeholder="Макс. CPM, ₽" />
+          </div>
+        </div>
+        <div class="channel-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Канал</th>
+                <th>Тематика</th>
+                <th>Подписчики</th>
+                <th>ERR</th>
+                <th>CPM</th>
+                <th>Почему подходит</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>@sakartvelo_routes</td>
+                <td>Путешествия</td>
+                <td>112k</td>
+                <td>28%</td>
+                <td>420 ₽</td>
+                <td>Прямые эфиры с маршрутов по Грузии</td>
+              </tr>
+              <tr>
+                <td>@veloclub</td>
+                <td>Велоспорт</td>
+                <td>185k</td>
+                <td>24%</td>
+                <td>380 ₽</td>
+                <td>Обсуждение экипировки и поездок</td>
+              </tr>
+              <tr>
+                <td>@nomadstories</td>
+                <td>Авторские туры</td>
+                <td>96k</td>
+                <td>31%</td>
+                <td>450 ₽</td>
+                <td>Рассказы о нетривиальных маршрутах</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="actions">
+          <button class="button secondary" data-nav="prev" data-target="audience">Назад</button>
+          <button class="button primary" data-nav="next" data-target="creatives">Далее · Креативы</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="creatives">
+        <p>Автогенерация постов на основе брифа. Можно редактировать или добавить свой текст.</p>
+        <div class="creative-list">
+          <div class="creative-card">
+            <label>Вариант 1</label>
+            <textarea>Как звучит грузинский ветер, когда несёшься на велосипеде среди виноградников? ...</textarea>
+          </div>
+          <div class="creative-card">
+            <label>Вариант 2</label>
+            <textarea>За 7 дней объезжаем горные тропы и нетуристические сёла Турции. Маршруты продуманы...</textarea>
+          </div>
+          <div class="creative-card">
+            <label>Свой текст</label>
+            <textarea placeholder="Добавьте авторскую версию для конкретного блогера"></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="button secondary" data-nav="prev" data-target="channels">Назад</button>
+          <button class="button primary" data-nav="next" data-target="launch">Далее · Предпросмотр</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="launch">
+        <p>Сводка перед запуском. После подтверждения кампания уходит на модерацию.</p>
+        <div class="summary-list">
+          <div class="summary-item">
+            <strong>Бюджет:</strong> 500 000 ₽ · CPP до 70 000 ₽ · CPM до 450 ₽
+          </div>
+          <div class="summary-item">
+            <strong>Аудитория:</strong> Путешествия, велоспорт, авторские туры · Гео: Россия/Грузия
+          </div>
+          <div class="summary-item">
+            <strong>Каналы:</strong> 12 отобрано · первые 3 показаны выше
+          </div>
+          <div class="summary-item">
+            <strong>Креативы:</strong> 2 варианта LLM + авторский
+          </div>
+          <div class="summary-item">
+            <strong>Дальше:</strong> Модерация до 24 часов, затем блогеры получают оффер.
+          </div>
+        </div>
+        <div class="actions">
+          <button class="button secondary" data-nav="prev" data-target="creatives">Назад</button>
+          <button class="button primary">Отправить на модерацию</button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const steps = Array.from(document.querySelectorAll('.step'));
+      const navLinks = Array.from(document.querySelectorAll('[data-step-link]'));
+      const titleNode = document.getElementById('step-title');
+      const progressNode = document.getElementById('progress');
+
+      function getStepIndex(id) {
+        return steps.findIndex((step) => step.dataset.step === id);
+      }
+
+      function applyStep(stepId) {
+        steps.forEach((step) => {
+          step.classList.toggle('active', step.dataset.step === stepId);
+        });
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.dataset.stepLink === stepId);
+        });
+        const index = Math.max(0, getStepIndex(stepId));
+        const total = steps.length;
+        const label = navLinks[index]?.textContent.replace(/^\d+\.\s*/, '') ?? navLinks[0].textContent;
+        titleNode.textContent = `Шаг ${index + 1} · ${label}`;
+        progressNode.style.width = `${((index + 1) / total) * 100}%`;
+      }
+
+      function syncWithHash() {
+        const raw = location.hash.replace('#', '');
+        const fallback = steps[0].dataset.step;
+        const isValid = steps.some((step) => step.dataset.step === raw);
+        const target = isValid ? raw : fallback;
+        if (!location.hash || !isValid) {
+          history.replaceState(null, '', `#${target}`);
+        }
+        applyStep(target);
+      }
+
+      document.querySelectorAll('[data-nav]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = button.dataset.target;
+          if (target) {
+            location.hash = target;
+          }
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        const remove = event.target.closest('.chip-remove');
+        if (remove) {
+          const chip = remove.closest('.chip');
+          chip?.remove();
+        }
+      });
+
+      window.addEventListener('hashchange', syncWithHash);
+      window.addEventListener('DOMContentLoaded', syncWithHash);
+    </script>
+  </body>
+</html>

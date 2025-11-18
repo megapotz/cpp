@@ -1,0 +1,236 @@
+:root {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  color: #0f172a;
+  background-color: #f5f6fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #eef2ff 0, #f8fafc 45%, #f5f6fb 100%);
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 320px;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.logo {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.caption {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.12);
+  color: #e2e8f0;
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+.nav-group {
+  margin-bottom: 24px;
+}
+
+.nav-group-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.nav-link {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: #cbd5f5;
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.nav-link.active {
+  background: linear-gradient(120deg, #6366f1, #a855f7);
+  color: #fff;
+}
+
+main {
+  flex: 1;
+  padding: 32px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.route-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+}
+
+.route-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.route-title {
+  font-size: 1.6rem;
+  margin: 0;
+  color: #0f172a;
+}
+
+.route-path {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', Consolas, monospace;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+}
+
+.badge.role-blogger {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.badge.role-admin {
+  background: rgba(248, 113, 113, 0.12);
+  color: #b91c1c;
+}
+
+.badge.role-bot {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0369a1;
+}
+
+.badge.role-general {
+  background: rgba(148, 163, 184, 0.2);
+  color: #475569;
+}
+
+.section-title {
+  margin: 24px 0 8px;
+  font-size: 1rem;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+ul, ol {
+  margin: 0;
+  padding-left: 18px;
+  color: #1e293b;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+}
+
+.card-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.06);
+  font-size: 0.8rem;
+}
+
+.link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.link-pill {
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: #eef2ff;
+  color: #3730a3;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.link-pill:hover {
+  background: #e0e7ff;
+}
+
+.empty-message {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+@media (max-width: 960px) {
+  .app {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex-direction: column;
+  }
+}
